@@ -48,31 +48,31 @@ function getWinner(playerMove,computerMove) {
       case 'rock' :
         return (computerMove == 'paper') ? 'computer' : 'player';
       default:
-        return 'computer'; // if Player enters invalid move then computer automatically wins; 
+        return 'computer'; // if Player enters invalid move (e.g., type) then computer automatically wins; 
     }  
   } else return 'tie'; 
 }
 
 function playToFive() {
   console.log("Let's play Rock, Paper, Scissors");
-  var playerWins = 0;
-  var computerWins = 0;
-  // Write code that plays 'Rock, Paper, Scissors' until either the player or the computer has won five times.
-  var playerMove, computerMove, winner = '';
-  while (playerWins < 5 && computerWins < 5) {
-    playerMove = getComputerMove(); // change this to getPlayerMove() for interaction
-    computerMove = getComputerMove();
-    console.log('Player chose ' + playerMove + ' while Computer chose ' + computerMove);
-    winner = getWinner(playerMove, computerMove);
-    if (winner != 'tie') {
-      if (winner == 'computer') {
-        computerWins++;
-      } else if (winner == 'player') {
-        playerWins++;
-      }
+
+  // Feeling NonInteractive? - switch getPlayerMove to getComputerMove
+  function getMoves() { return [getPlayerMove(), getComputerMove()] };
+
+  function playWhile(winPred, playerWins, computerWins) {
+    if (eval(winPred)) {
+      console.log('The winner is ' + ((playerWins > computerWins) ?
+                                      'Player with ' + playerWins + ' wins, Computer had ' + computerWins : 
+                                      'Computer:' + computerWins + ' wins, Player had ' + playerWins)); 
+      return [playerWins, computerWins]
     }
-    console.log('The score is currently ' + playerWins + ' to ' + computerWins + '\n');
+    else {
+      let moves = getMoves(), winner = getWinner(moves[0], moves[1]);
+      if (winner != 'tie') (winner === 'player') ? playerWins+=1 : computerWins+=1;
+      console.log('Player chose ' + moves[0] + ' while Computer chose ' + moves[1]);
+      playWhile(winPred, playerWins, computerWins);
+    }
   }
-  console.log('The winner is ' + ((playerWins > computerWins) ? 'player' : 'computer')); 
-  return [playerWins, computerWins];
+  // Write code that plays 'Rock, Paper, Scissors' until either the player or the computer has won five times.
+  return playWhile("playerWins == 5 || computerWins == 5", 0, 0);
 }
